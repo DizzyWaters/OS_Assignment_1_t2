@@ -3,14 +3,11 @@
 #include <math.h>
 #include <string.h>
 
-#define CHUCNK_SIZE (64 * 1024 * 1024)
-
-int find_farthest_point(const char *filename, double *maxDistance);
-
+#define CHUNK_SIZE (64 * 1024 * 1024)
 
 int find_farthest_point(const char *filename, double *maxDistance)
 {
-	FILE *fp = fopen(filename, "r")
+	FILE *fp = fopen(filename, "r");
 	if(!fp)
 	{
 		perror("Can't open file");
@@ -33,18 +30,18 @@ int find_farthest_point(const char *filename, double *maxDistance)
 	size_t bytesRead;
 	while(bytesRead = fread(buffer, 1 ,CHUNK_SIZE, fp) > 0)
 	{
-		buffer[bytesRead] = "\0";
+		buffer[bytesRead] = '\0';
 	}
 
 	char *chunkData;
 
 	if(leftover)
 	{
-		size_t leftover = strLen(leftover); 
+		size_t leftoverLen = strlen(leftover); 
 		chunkData = malloc(leftoverLen + bytesRead + 1);
 		memcpy(chunkData, leftover, leftoverLen);
 		memcpy(chunkData + leftoverLen, buffer, bytesRead + 1); // first argument is just incement of the pointer to the memmory allocated.
-		combined[leftoverLen + bytesRead] = "\0";
+	    chunkData[leftoverLen + bytesRead] = '\0';
 		free(leftover);
 		leftover = NULL;
 	}
@@ -60,7 +57,7 @@ int find_farthest_point(const char *filename, double *maxDistance)
 	char *lineStart = chunkData;
 	char *newLine;
 
-	while((newLine = strchr(lineStart, "\n")) != NULL)
+	while((newLine = strchr(lineStart, '\n')) != NULL)
 	{
 		*newLine = '\0';
 
@@ -75,7 +72,7 @@ int find_farthest_point(const char *filename, double *maxDistance)
 			if(tmpDist > maxDist)
 			{
 				maxDist = tmpDist;
-				fertherLine = lineNumber;
+				fartherLine = lineNumber;
 			}
  			
 		}
@@ -113,5 +110,5 @@ int find_farthest_point(const char *filename, double *maxDistance)
 	free(buffer);
 	fclose(fp);
 	*maxDistance = maxDist;
-	return farthestLine;
+	return fartherLine;
 }
