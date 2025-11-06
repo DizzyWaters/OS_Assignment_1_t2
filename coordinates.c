@@ -20,7 +20,7 @@ int find_farthest_point(const char *filename, double *maxDistance)
 		perror("malloc failed");
 		fclose(fp);
 		return -1;
-	};
+	}
 
 	char *leftover = NULL;
 	long lineNumber = 0;
@@ -28,10 +28,9 @@ int find_farthest_point(const char *filename, double *maxDistance)
 	double maxDist = 0.0;
 
 	size_t bytesRead;
-	while(bytesRead = fread(buffer, 1 ,CHUNK_SIZE, fp) > 0)
+	while((bytesRead = fread(buffer, 1 ,CHUNK_SIZE, fp)) > 0)
 	{
 		buffer[bytesRead] = '\0';
-	}
 
 	char *chunkData;
 
@@ -40,7 +39,7 @@ int find_farthest_point(const char *filename, double *maxDistance)
 		size_t leftoverLen = strlen(leftover); 
 		chunkData = malloc(leftoverLen + bytesRead + 1);
 		memcpy(chunkData, leftover, leftoverLen);
-		memcpy(chunkData + leftoverLen, buffer, bytesRead + 1); // first argument is just incement of the pointer to the memmory allocated.
+		memcpy(chunkData + leftoverLen, buffer, bytesRead); // first argument is just incement of the pointer to the memmory allocated.
 	    chunkData[leftoverLen + bytesRead] = '\0';
 		free(leftover);
 		leftover = NULL;
@@ -50,13 +49,9 @@ int find_farthest_point(const char *filename, double *maxDistance)
 		chunkData = strdup(buffer);
 	}
 
-
 	// Process lines
-	
-
 	char *lineStart = chunkData;
 	char *newLine;
-
 	while((newLine = strchr(lineStart, '\n')) != NULL)
 	{
 		*newLine = '\0';
@@ -85,28 +80,21 @@ int find_farthest_point(const char *filename, double *maxDistance)
 		leftover = strdup(lineStart);
 	}
 	free(chunkData);
-
+	}
 
 	// to prevent mem leaks of incomplited chunks and if file doesn't end with newline
-	
-	if (leftover)
-	{
-		int x;
-		int y;
-		int z;
-		if(scanf(leftover, "%d %d %d", &x, &y,&z) == 3)
-		{
-			lineNumber++;
-		double dist = sqrt((double)x * x + (double)y * y + (double)z * z);
-		if (dist > maxDist)
-		{
-			maxDist = dist;
-			fartherLine = lineNumber;
-		}
-		}
-
-	free(leftover);
-	}
+    if (leftover) {
+        int x, y, z;
+        if (sscanf(leftover, "%d %d %d", &x, &y, &z) == 3) {
+            lineNumber++;
+            double dist = sqrt((double)x * x + (double)y * y + (double)z * z);
+            if (dist > maxDist) {
+                maxDist = dist;
+                fartherLine = lineNumber;
+            }
+        }
+        free(leftover);
+    }
 	free(buffer);
 	fclose(fp);
 	*maxDistance = maxDist;

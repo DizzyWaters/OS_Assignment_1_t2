@@ -1,0 +1,12 @@
+*** HOW TO INSTALL DLL .so
+
+sudo apt libcoordinates.so /usr/local/lib/
+sudo ldconfing
+
+#### how to check
+
+ldconfig -p | grep coordinates
+
+*** LINK  .H
+
+sudo cp coordinates.h /usr/local/include/
